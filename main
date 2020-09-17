@@ -1,0 +1,219 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Aug 14 11:29:58 2020
+
+@author: 45016577
+"""
+
+#!/usr/bin/env python
+#!/usr/bin/env python
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import matplotlib.pyplot as plt
+import numpy as np
+import inspect
+import PySimpleGUI as sg
+import matplotlib
+matplotlib.use('TkAgg')
+
+"""
+Demonstrates one way of embedding Matplotlib figures into a PySimpleGUI window.
+
+Basic steps are:
+ * Create a Canvas Element
+ * Layout form
+ * Display form (NON BLOCKING)
+ * Draw plots onto convas
+ * Display form (BLOCKING)
+"""
+
+
+def PyplotSimple(): # 1, top-10 visulization
+    import matplotlib.pyplot as plt
+    import matplotlib.image as mpimg
+    
+    #image you want to show
+    img = mpimg.imread('1-2.png')
+    plt.imshow(img)
+    plt.axis("off")
+    
+    
+    fig = plt.gcf()  # get the figure to show
+    
+    return fig
+
+
+def PyplotFormatstr(): # 2, User Feature Modeling Visulization
+
+    import matplotlib.pyplot as plt
+    import matplotlib.image as mpimg
+    
+    #image you want to show
+    img = mpimg.imread('2-2.png')
+    plt.imshow(img)
+    plt.axis("off")
+    
+    
+    fig = plt.gcf()  # get the figure to show
+    
+    return fig
+
+
+def UnicodeMinus(): # 5, Results Showing
+    import matplotlib.pyplot as plt
+    import matplotlib.image as mpimg
+    
+    #image you want to show
+    img = mpimg.imread('Figure2aaa.png')
+    plt.imshow(img)
+    plt.axis("off")
+    
+    
+    fig = plt.gcf()  # get the figure to show
+    
+    return fig
+
+def Subplot3d(): # 4, Trust Relation Measurement Visulization
+    import matplotlib.pyplot as plt
+    import matplotlib.image as mpimg
+    
+    #image you want to show
+    img = mpimg.imread('2-4.png')
+    plt.imshow(img)
+    plt.axis("off")
+    
+    
+    fig = plt.gcf()  # get the figure to show
+    
+    return fig
+
+
+def PyplotScales(): # 3, deep multi-layer projection
+    import matplotlib.pyplot as plt
+    import matplotlib.image as mpimg
+    
+    #image you want to show
+    img = mpimg.imread('2-3.png')
+    plt.imshow(img)
+    plt.axis("off")
+    
+    
+    fig = plt.gcf()  # get the figure to show
+    
+    return fig
+
+
+
+
+#  The magic function that makes it possible.... glues together tkinter and pyplot using Canvas Widget
+
+
+def draw_figure(canvas, figure):
+    figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
+    figure_canvas_agg.draw()
+    figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
+    return figure_canvas_agg
+
+
+def delete_figure_agg(figure_agg):
+    figure_agg.get_tk_widget().forget()
+    plt.close('all')
+
+
+# -------------------------------- GUI Starts Here -------------------------------#
+# fig = your figure you want to display.  Assumption is that 'fig' holds the      #
+#       information to display.                                                   #
+# --------------------------------------------------------------------------------#
+
+# print(inspect.getsource(PyplotSimple))
+
+
+fig_dict = {'Top Trustees Visulization': PyplotSimple, 'User Feature Modeling Visulization': PyplotFormatstr, 'Latent Feature Projection Visulization': PyplotScales, 
+            'Trust Relation Measurement Visulization': Subplot3d, 'Results Showing': UnicodeMinus}
+
+
+sg.theme('BlueMono')
+figure_w, figure_h = 500,700        # for Non-TRINKET use 650,650
+# define the form layout
+# ------ Menu Definition ------ #      
+menu_def = [['File', ['Open', 'Save', 'Exit', 'Properties']],      
+            ['Edit', ['Paste', ['Special', 'Normal', ], 'Undo'], ],      
+            ['Help', 'About...'], ]   
+
+a = [2,3,4,5]
+b =[2,3,4,5]
+col_arg =[[sg.Menu(menu_def, tearoff=True)],
+          [sg.Txt('Enter user id to calculate',font=('Helvetica', 16))],      
+          [sg.In(size=(32,1), key='-numerator-')],  
+          [sg.Txt('Enter user id  to calculate',font=('Helvetica', 16))],
+          [sg.In(size=(32,1), key='-denominator-')], 
+          [sg.Txt('', size=(35,1), key='newoutput')],      
+          [sg.Button('Calculate', bind_return_key=True)],
+          [sg.Text('_'  * 100, size=(65, 1))]]
+
+
+listbox_values = list(fig_dict)
+col_listbox = [[sg.Column(col_arg)],
+               [sg.Text('Visulization of Each Step', font=('Helvetica', 20))],
+               [sg.Listbox(values=listbox_values, change_submits=True, size=(75, len(listbox_values)), key='-LISTBOX-')],
+               [sg.Text('_' * 100, size=(65, 1))],
+               [sg.Text('Parameters Selecting', font=('Helvetica', 20))],
+               [sg.Text('Layers', size=(20, 1)), sg.Spin(values=[i for i in a], initial_value=2, size=(1, 1),key = 'layers')],      
+               [sg.Text('Negative Samples', size=(20, 1)), sg.Spin(values=[i for i in b], initial_value=2, size=(1, 1),key = 'units')],
+               [sg.Text('Dataset', font=('Helvetica', 20))],
+               [sg.Radio('Epinions', 'sparsity1', size=(14, 1)), sg.Radio('Ciao', 'sparsity2', size=(14, 1))],
+               [sg.Text('Loss Functions', font=('Helvetica', 20), justification='left')],      
+               [sg.Radio('Cross-Entropy', 'loss', size=(14, 1))], 
+               [sg.Text('Select Sparsity Degree(%)', font=('Helvetica', 20), justification='left')],      
+               [sg.Radio('0.2455', 'sparsity1', size=(14, 1)), sg.Radio('0.1869', 'sparsity2', size=(14, 1)),sg.Radio('0.1237', 'sparsity3', size=(14, 1))], 
+               [sg.Text('', size=(30,1), key='output')],
+               [sg.Submit()],
+               [sg.Text('_'  * 100, size=(65, 1))]]
+
+col_multiline = sg.Col([[sg.MLine(size=(70, 35), key='-MULTILINE-')]])
+col_canvas = sg.Col([[sg.Canvas(size=(figure_w, figure_h), key='-CANVAS-')]])
+col_instructions = sg.Col([[sg.Pane([col_canvas, col_multiline], size=(figure_w,figure_h))],
+                           [sg.Text('Grab square above and slide upwards to view source code for graph')]])
+
+layout = [[sg.Text('DTruPS Trust Prediction System', font=('ANY 26'))],
+          [sg.Col(col_listbox), col_instructions], ]
+
+# create the form and show it without the plot
+window = sg.Window('DTruPS Demo System', layout, resizable=True, finalize=True)
+
+canvas_elem = window['-CANVAS-']
+multiline_elem = window['-MULTILINE-']
+figure_agg = None
+
+
+
+while True:
+    event, values = window.read()
+    
+    if event in (None, 'Exit'):
+        break
+    
+    else:
+        try:      
+            numerator = float(values['-numerator-'])      
+            denominator = float(values['-denominator-'])      
+            calc = cos(u_truster,u_trustee)
+        except:      
+            calc = 'Invalid'   
+        b = 'The trust possibility between them is calc!'
+        window.Element('newoutput').update(b)     
+    if figure_agg:
+        # ** IMPORTANT ** Clean up previous drawing before drawing again
+        delete_figure_agg(figure_agg)
+   
+    # get first listbox item chosen (returned as a list)
+    choice = values['-LISTBOX-'][0]
+    # get function to call from the dictionary
+    func = fig_dict[choice]
+    # show source code to function in multiline
+    window['-MULTILINE-'].update(inspect.getsource(func))
+    fig = func()                                    # call function to get the figure
+    figure_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig)  # draw the figure
+
+        
+    
+   
